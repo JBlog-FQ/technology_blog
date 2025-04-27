@@ -58,9 +58,6 @@ export default function AdminPage() {
     setIsSubmitting(true);
     
     try {
-      // 读取文件内容
-      const fileContent = await file.text();
-      
       // 创建表单数据
       const formData = new FormData();
       formData.append('file', file);
