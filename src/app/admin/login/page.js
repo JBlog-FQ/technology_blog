@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { adminLogin } from '@/utils/auth';
 import Link from 'next/link';
 
-export default function AdminLoginPage() {
+// 创建一个包装组件来处理搜索参数
+function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
@@ -102,5 +103,26 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// 加载时的占位内容
+function LoginLoading() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+          正在加载...
+        </h2>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<LoginLoading />}>
+      <LoginForm />
+    </Suspense>
   );
 } 
