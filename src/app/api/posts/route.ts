@@ -15,6 +15,8 @@ export async function POST(request: NextRequest) {
     const slug = formData.get('slug') as string;
     const excerpt = formData.get('excerpt') as string;
     const tagsString = formData.get('tags') as string;
+    const author = formData.get('author') as string;
+    const coverImage = formData.get('coverImage') as File | null;
     
     // 验证必填字段
     if (!file || !title || !slug) {
@@ -53,6 +55,30 @@ export async function POST(request: NextRequest) {
     const filePath = path.join(contentDir, fileName);
     await writeFile(filePath, content);
     
+    // 处理封面图片（如果有）
+    let coverImagePath = '';
+    if (coverImage) {
+      // 创建图片目录（如果不存在）
+      const imagesDir = path.join(process.cwd(), 'public', 'images', 'blog');
+      if (!existsSync(imagesDir)) {
+        await mkdir(imagesDir, { recursive: true });
+      }
+      
+      // 获取文件扩展名
+      const fileExt = coverImage.name.split('.').pop()?.toLowerCase() || 'jpg';
+      
+      // 生成唯一的图片文件名
+      const imageFileName = `${slug}-cover.${fileExt}`;
+      const imagePath = path.join(imagesDir, imageFileName);
+      
+      // 保存图片
+      const imageBuffer = Buffer.from(await coverImage.arrayBuffer());
+      await writeFile(imagePath, imageBuffer);
+      
+      // 设置图片路径（相对于public目录）
+      coverImagePath = `/images/blog/${imageFileName}`;
+    }
+    
     // 创建新文章对象
     const newPost: BlogPost = {
       id: uuidv4(),
@@ -62,11 +88,16 @@ export async function POST(request: NextRequest) {
       excerpt: excerpt || content.substring(0, 150) + '...',
       content,
       author: {
-        name: '博主', // 可以从用户会话或配置中获取
+        name: author || '博主', // 可以从用户会话或配置中获取
         avatar: '/images/avatar.jpg'
       },
       tags
     };
+    
+    // 如果有封面图片，添加到文章对象
+    if (coverImagePath) {
+      newPost.coverImage = coverImagePath;
+    }
     
     // 更新blogPosts数组（临时方案，实际应该持久化到数据库或文件）
     // 注意：这种方法在服务器重启后会丢失更改，仅用于演示

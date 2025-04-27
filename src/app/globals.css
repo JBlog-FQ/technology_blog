@@ -447,3 +447,594 @@ body {
 .dark .border-card-border {
   border-color: var(--card-border);
 }
+
+/* 强化Markdown格式支持 */
+.typora-like-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'LXGW WenKai', Helvetica, Arial, sans-serif;
+  line-height: 1.8;
+  font-size: 1rem;
+  color: #333;
+  padding: 10px 5%;
+  word-wrap: break-word;
+}
+
+.dark .typora-like-content {
+  color: #e6e6e6;
+}
+
+/* 标题样式增强 */
+.typora-like-content h1 {
+  font-size: 2.25rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eaecef;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.typora-like-content h2 {
+  font-size: 1.75rem;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.3rem;
+  font-weight: 600;
+  line-height: 1.25;
+  border-bottom: 1px solid #eaecef;
+}
+
+.typora-like-content h3 {
+  font-size: 1.4rem;
+  margin-top: 1.75rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #2563eb;
+}
+
+.dark .typora-like-content h3 {
+  color: #60a5fa;
+}
+
+.typora-like-content h4 {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.typora-like-content h5 {
+  font-size: 1rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.typora-like-content h6 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #6a737d;
+}
+
+.dark .typora-like-content h1,
+.dark .typora-like-content h2,
+.dark .typora-like-content h4,
+.dark .typora-like-content h5 {
+  color: #e6e6e6;
+  border-bottom-color: #3e4c5a;
+}
+
+.dark .typora-like-content h6 {
+  color: #b2bac2;
+}
+
+.typora-like-content h1,
+.typora-like-content h2,
+.typora-like-content h3,
+.typora-like-content h4,
+.typora-like-content h5,
+.typora-like-content h6 {
+  position: relative;
+  scroll-margin-top: 4rem;
+}
+
+/* 调整标题前的锚点 - 更符合Typora风格 */
+.typora-like-content h1:hover::before,
+.typora-like-content h2:hover::before,
+.typora-like-content h3:hover::before,
+.typora-like-content h4:hover::before {
+  content: '#';
+  position: absolute;
+  left: -1.2rem;
+  top: 0;
+  color: #6366f1;
+  font-weight: normal;
+  opacity: 0.6;
+}
+
+/* 段落样式增强 */
+.typora-like-content p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+/* 列表样式增强 */
+.typora-like-content ul,
+.typora-like-content ol {
+  padding-left: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.typora-like-content li {
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.typora-like-content li > p {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.typora-like-content li + li {
+  margin-top: 0.25rem;
+}
+
+/* 美化无序列表标记 */
+.typora-like-content ul li::before {
+  content: "";
+  position: absolute;
+  left: -1.25rem;
+  top: 0.6rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #6366f1;
+}
+
+.dark .typora-like-content ul li::before {
+  background-color: #818cf8;
+}
+
+/* 美化有序列表编号 */
+.typora-like-content ol {
+  counter-reset: item;
+}
+
+.typora-like-content ol li {
+  counter-increment: item;
+}
+
+.typora-like-content ol li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: -1.5rem;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+.dark .typora-like-content ol li::before {
+  color: #818cf8;
+}
+
+/* 代码块样式增强 */
+.typora-like-content pre {
+  position: relative;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  padding: 1.25rem;
+  overflow-x: auto;
+  background-color: #f6f8fa;
+  border: 1px solid #e1e4e8;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dark .typora-like-content pre {
+  background-color: #1e2329;
+  border-color: #2c333a;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 增强内联代码样式 */
+.typora-like-content code {
+  font-family: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9em;
+  border-radius: 3px;
+}
+
+.typora-like-content p code,
+.typora-like-content li code,
+.typora-like-content h1 code,
+.typora-like-content h2 code,
+.typora-like-content h3 code {
+  background-color: rgba(175, 184, 193, 0.2);
+  padding: 0.2em 0.4em;
+  margin: 0 0.2em;
+  border-radius: 3px;
+  font-weight: normal;
+}
+
+.dark .typora-like-content p code,
+.dark .typora-like-content li code,
+.dark .typora-like-content h1 code,
+.dark .typora-like-content h2 code,
+.dark .typora-like-content h3 code {
+  background-color: rgba(110, 118, 129, 0.4);
+  color: #e6e6e6;
+}
+
+/* 表格样式增强 */
+.typora-like-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+  display: table;
+  overflow-x: auto;
+  border-spacing: 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.typora-like-content table th {
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 16px;
+  background-color: #f6f8fa;
+  border: 1px solid #dfe2e5;
+  color: #1a202c;
+}
+
+.typora-like-content table td {
+  text-align: left;
+  padding: 10px 16px;
+  border: 1px solid #dfe2e5;
+}
+
+.typora-like-content table tr:nth-child(2n) {
+  background-color: #f8fafc;
+}
+
+.dark .typora-like-content table {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dark .typora-like-content table th {
+  background-color: #2c333a;
+  border-color: #3e4c5a;
+  color: #f1f5f9;
+}
+
+.dark .typora-like-content table td {
+  border-color: #3e4c5a;
+}
+
+.dark .typora-like-content table tr:nth-child(2n) {
+  background-color: #1e2329;
+}
+
+/* 引用块样式增强 */
+.typora-like-content blockquote {
+  position: relative;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  color: #4b5563;
+  font-style: italic;
+  border-left: 4px solid #6366f1;
+  background-color: #f8fafc;
+  border-radius: 0 4px 4px 0;
+}
+
+.dark .typora-like-content blockquote {
+  color: #e2e8f0;
+  border-left-color: #818cf8;
+  background-color: #1e293b;
+}
+
+/* 强调和加粗文本增强 */
+.typora-like-content strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.typora-like-content em {
+  font-style: italic;
+  color: #4b5563;
+}
+
+.dark .typora-like-content strong {
+  color: #f3f4f6;
+}
+
+.dark .typora-like-content em {
+  color: #d1d5db;
+}
+
+/* 图片容器增强 */
+.typora-like-content figure {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.typora-like-content figure img {
+  max-width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  transition: transform 0.3s ease;
+}
+
+.typora-like-content figure img:hover {
+  transform: scale(1.01);
+}
+
+.typora-like-content figcaption {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+  text-align: center;
+}
+
+.dark .typora-like-content figcaption {
+  color: #9ca3af;
+}
+
+/* 水平线样式增强 */
+.typora-like-content hr {
+  height: 0.25rem;
+  padding: 0;
+  margin: 2rem 0;
+  background: linear-gradient(to right, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.5), rgba(99, 102, 241, 0.2));
+  border: 0;
+  border-radius: 1rem;
+}
+
+.dark .typora-like-content hr {
+  background: linear-gradient(to right, rgba(129, 140, 248, 0.2), rgba(129, 140, 248, 0.5), rgba(129, 140, 248, 0.2));
+}
+
+/* 链接样式增强 */
+.typora-like-content a {
+  color: #2563eb;
+  text-decoration: none;
+  border-bottom: 1px dashed #93c5fd;
+  transition: color 0.2s, border-bottom 0.2s;
+}
+
+.typora-like-content a:hover {
+  color: #1d4ed8;
+  border-bottom: 1px solid #60a5fa;
+}
+
+.dark .typora-like-content a {
+  color: #60a5fa;
+  border-bottom-color: #3b82f6;
+}
+
+.dark .typora-like-content a:hover {
+  color: #93c5fd;
+  border-bottom-color: #60a5fa;
+}
+
+/* 目录导航样式增强 */
+.toc-nav {
+  font-size: 0.95rem;
+  padding-right: 0.5rem;
+}
+
+.toc-link {
+  display: block;
+  padding: 4px 0;
+  color: #4b5563;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+  padding-left: 6px;
+  margin-left: -8px;
+  border-radius: 0 3px 3px 0;
+}
+
+.toc-link:hover, 
+.toc-link:focus {
+  color: #4f46e5;
+  background-color: rgba(99, 102, 241, 0.05);
+  border-left-color: #818cf8;
+}
+
+.dark .toc-link {
+  color: #9ca3af;
+}
+
+.dark .toc-link:hover, 
+.dark .toc-link:focus {
+  color: #818cf8;
+  background-color: rgba(129, 140, 248, 0.1);
+  border-left-color: #818cf8;
+}
+
+/* 左侧目录优化 */
+.toc-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.toc-container button {
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.toc-container button:hover {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+.dark .toc-container button:hover {
+  background-color: rgba(129, 140, 248, 0.1);
+}
+
+.toc-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.toc-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.toc-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.dark .toc-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 降低内联代码和代码块内容的亮度 - 让它们更易于查看 */
+.dark .typora-like-content pre,
+.dark .typora-like-content code {
+  color: #e6e6e6;
+}
+
+/* 添加标记高亮样式 */
+.typora-like-content mark,
+.typora-like-content .mark {
+  background-color: #ffcdd2;
+  color: #b71c1c;
+  padding: 0 0.2em;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.dark .typora-like-content mark,
+.dark .typora-like-content .mark {
+  background-color: rgba(183, 28, 28, 0.3);
+  color: #ef5350;
+}
+
+/* 为==text==格式支持添加样式 */
+.typora-like-content p:has(del + del),
+.typora-like-content li:has(del + del) {
+  margin: inherit;
+}
+
+.typora-like-content del + del {
+  text-decoration: none;
+  display: inline-block;
+  background-color: #ffcdd2;
+  color: #b71c1c;
+  padding: 0 0.2em;
+  margin: 0 0.1em;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+.dark .typora-like-content del + del {
+  background-color: rgba(183, 28, 28, 0.3);
+  color: #ef5350;
+}
+
+/* 目录滚动条样式 */
+.toc-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.toc-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.toc-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.3);
+  border-radius: 10px;
+}
+
+.dark .toc-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(129, 140, 248, 0.3);
+}
+
+.toc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(99, 102, 241, 0.5);
+}
+
+.dark .toc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(129, 140, 248, 0.5);
+}
+
+/* GitHub Flavored Markdown样式支持 */
+/* 任务列表 */
+.typora-like-content .task-list-item {
+  list-style-type: none;
+  position: relative;
+  padding-left: 0.5rem;
+  margin-left: -1.5rem;
+}
+
+.typora-like-content .task-list-item-checkbox {
+  margin-right: 0.5rem;
+  position: relative;
+  top: 0.1rem;
+}
+
+/* GitHub风格的代码块和单行代码 */
+.typora-like-content code:not([class*="language-"]) {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 3px;
+  font-family: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.dark .typora-like-content code:not([class*="language-"]) {
+  background-color: rgba(99, 110, 123, 0.4);
+}
+
+/* GitHub风格表格 */
+.typora-like-content .table-container {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.typora-like-content table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+.typora-like-content table th {
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d0d7de;
+  background-color: #f6f8fa;
+}
+
+.typora-like-content table td {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d0d7de;
+}
+
+.dark .typora-like-content table th {
+  background-color: #161b22;
+  border-color: #30363d;
+}
+
+.dark .typora-like-content table td {
+  border-color: #30363d;
+}
+
+/* URL链接样式 */
+.typora-like-content .url-link {
+  word-break: break-all;
+  font-family: 'Fira Code', 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.9em;
+}
