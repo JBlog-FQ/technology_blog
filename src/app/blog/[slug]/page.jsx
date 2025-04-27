@@ -15,8 +15,8 @@ export function generateStaticParams() {
 }
 
 // 动态生成元数据
-export async function generateMetadata(props) {
-  const { slug } = props.params;
+export async function generateMetadata({ params }) {
+  const slug = params.slug;
   const post = blogPosts.find((post) => post.slug === slug);
   
   if (!post) {
@@ -32,9 +32,8 @@ export async function generateMetadata(props) {
 }
 
 // 使用服务器组件来渲染页面内容
-
-export default async function BlogPostPage(props) {
-  const { slug } = props.params;
+export default async function BlogPostPage({ params }) {
+  const slug = params.slug;
   const post = await getPostBySlug(slug);
   
   if (!post) {

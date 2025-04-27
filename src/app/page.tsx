@@ -1,190 +1,101 @@
 'use client';
 
-import BlogCard from "@/components/blog/BlogCard";
-import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
 import Image from "next/image";
-import { useEffect, useState } from 'react';
-import { BlogPost } from '@/types/blog';
-import { getRecentPostsClient } from '@/lib/blog';
+import { useEffect, useState, useRef } from 'react';
 
-export const dynamic = 'force-static'; // 强制静态生成以提高性能
-
-// 创建一个加载占位组件
-function LoadingPosts() {
-  return (
-    <>
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="animate-pulse">
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4"></div>
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-        </div>
-      ))}
-    </>
-  );
-}
+export const dynamic = 'force-static';
 
 export default function Home() {
+  const [bgImage, setBgImage] = useState("/images/1.jpg");
+  const [displayedText, setDisplayedText] = useState("");
+  const fullText = "⭐️未闻花名，但识花香。再见花时，泪已成行！⭐️";
+  const sectionRef = useRef<HTMLDivElement>(null);
+  
+  // 文字动画效果
+  useEffect(() => {
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < fullText.length) {
+        setDisplayedText(fullText.substring(0, index + 1));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 150); // 每个字符显示的时间间隔
+    
+    return () => clearInterval(timer);
+  }, []);
+  
+  // 随机背景图
+  useEffect(() => {
+    const imageNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const randomIndex = Math.floor(Math.random() * imageNumbers.length);
+    const randomImage = `/images/${imageNumbers[randomIndex]}.jpg`;
+    setBgImage(randomImage);
+  }, []);
+
+  // 处理下拉箭头点击
+  const handleScrollDown = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: 'smooth'
+    });
+  };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen transition-theme">
       {/* Hero Section - 全屏背景图片 */}
-      <section className="relative h-screen flex items-center justify-center">
+      <section ref={sectionRef} className="relative h-[90vh] flex items-center justify-center transition-theme">
         {/* 背景图片 */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/7.jpg"
+            src={bgImage}
             alt="背景图片"
             fill
             className="object-cover"
             priority
           />
           {/* 半透明遮罩，使文字更加清晰 */}
-          <div className="absolute inset-0 bg-black/30"></div>
+          <div className="absolute inset-0 bg-black/30 transition-theme"></div>
         </div>
         
         <div className="relative z-10 text-center px-4 max-w-3xl">
-          <h1 
-            className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-6"
-          >
-            路人の博客
-          </h1>
           <div className="flex items-center justify-center mb-8">
-            <span className="text-yellow-400 mr-2 text-xl">★</span>
-            <p className="text-xl text-white">
-              未闻花名，但识花香。再见花时，泪已成行！
+            <p className="text-xl text-white min-h-[1.75rem] transition-theme">
+              {displayedText}
+              <span className="animate-blink">|</span>
             </p>
-          </div>
-          <div className="flex justify-center gap-4">
-            <Button href="/blog" size="lg">浏览所有文章</Button>
-            <Button href="/about" variant="outline" size="lg">了解更多</Button>
           </div>
         </div>
         
-        {/* 向下箭头 */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-          </svg>
-        </div>
-      </section>
-
-      {/* Recent Posts Section */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            最新文章
-          </h2>
-          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            浏览我最近发布的技术文章和分享
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <RecentPostsClient />
-        </div>
-
-        <div className="mt-12 text-center">
-          <Button href="/blog" variant="ghost">
-            查看所有文章
-            <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        {/* 向下箭头 - 确保在视口内可见 */}
+        <div 
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer z-20 transition-theme"
+          onClick={handleScrollDown}
+        >
+          <div className="bg-white/30 dark:bg-black/30 p-3 rounded-full backdrop-blur-sm transition-theme">
+            <svg className="w-6 h-6 text-white transition-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
             </svg>
-          </Button>
+          </div>
         </div>
       </section>
-
-      {/* Features Section */}
-      <section className="bg-gray-50 dark:bg-gray-800 py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-              博客特色
-            </h2>
-            <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              探索这个博客所提供的内容和功能
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            <Card hover padding="lg">
-              <div className="text-indigo-600 dark:text-indigo-400 mb-4">
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                技术见解
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                深入探讨前端和后端开发的各种技术，分享实用的编程技巧和解决方案。
-              </p>
-            </Card>
-
-            <Card hover padding="lg">
-              <div className="text-indigo-600 dark:text-indigo-400 mb-4">
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                学习资源
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                提供各种学习资源、教程和工具推荐，帮助读者提升技术能力。
-              </p>
-            </Card>
-
-            <Card hover padding="lg">
-              <div className="text-indigo-600 dark:text-indigo-400 mb-4">
-                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                经验分享
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                分享个人在技术领域的成长经验、项目实践和职业发展心得。
-              </p>
-            </Card>
+      
+      {/* 添加一个额外的部分让箭头有地方可以滚动到 */}
+      <section className="h-screen flex items-center justify-center bg-card-bg transition-theme">
+        <div className="ide-card p-8 m-4 rounded-lg max-w-2xl transition-theme">
+          <h2 className="text-3xl font-bold mb-4 text-text-primary transition-theme">内容区域</h2>
+          <p className="text-lg text-text-secondary transition-theme">这里可以放置更多的内容</p>
+          <div className="mt-6 ide-code-block">
+            <pre className="font-mono text-sm transition-theme">
+              {`// 代码示例
+function helloWorld() {
+  console.log("欢迎访问路人の博客!");
+}`}
+            </pre>
           </div>
         </div>
       </section>
     </div>
-  );
-}
-
-// 重新实现为客户端组件，使用React的状态管理来加载数据
-function RecentPostsClient() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadPosts() {
-      try {
-        // 在客户端获取数据
-        const recentPosts = await getRecentPostsClient(3);
-        setPosts(recentPosts);
-      } catch (error) {
-        console.error('Failed to load recent posts:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadPosts();
-  }, []);
-
-  if (loading) {
-    return <LoadingPosts />;
-  }
-
-  return (
-    <>
-      {posts.map((post) => (
-        <BlogCard key={post.id} post={post} />
-      ))}
-    </>
   );
 }
