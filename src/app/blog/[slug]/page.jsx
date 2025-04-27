@@ -1,4 +1,3 @@
-import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -8,16 +7,15 @@ import { blogPosts } from '@/data/blogPosts';
 import { parseMarkdown } from '@/utils/markdown';
 import { getPostBySlug } from '@/lib/blog';
 
-// 定义页面参数
-interface PageProps {
-  params: {
-    slug: string; 
-  };
-  searchParams?: Record<string, string | string[] | undefined>;
+// 生成静态路径
+export function generateStaticParams() {
+  return blogPosts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 // 动态生成元数据
-export async function generateMetadata(props: PageProps): Promise<Metadata> {
+export async function generateMetadata(props) {
   const { slug } = props.params;
   const post = blogPosts.find((post) => post.slug === slug);
   
@@ -33,15 +31,8 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   };
 }
 
-// 生成静态路径
-export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
 // 使用服务器组件来渲染页面内容
-export default async function BlogPostPage(props: PageProps) {
+export default async function BlogPostPage(props) {
   const { slug } = props.params;
   const post = await getPostBySlug(slug);
   
