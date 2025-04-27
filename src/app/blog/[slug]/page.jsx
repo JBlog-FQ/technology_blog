@@ -32,6 +32,7 @@ export async function generateMetadata(props) {
 }
 
 // 使用服务器组件来渲染页面内容
+
 export default async function BlogPostPage(props) {
   const { slug } = props.params;
   const post = await getPostBySlug(slug);
