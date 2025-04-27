@@ -18,7 +18,7 @@ interface BlogPostPageProps {
 export async function generateMetadata(
   { params }: BlogPostPageProps
 ): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   const post = blogPosts.find((post) => post.slug === slug);
   
   if (!post) {
@@ -42,7 +42,7 @@ export async function generateStaticParams() {
 
 // 使用服务器组件来渲染页面内容
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const post = await getPostBySlug(slug);
   
   if (!post) {
