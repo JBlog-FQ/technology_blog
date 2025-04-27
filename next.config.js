@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
   // 配置图片优化
   images: {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
@@ -26,4 +27,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig; 
