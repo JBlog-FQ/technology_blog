@@ -31,7 +31,7 @@ const BlogCard = memo(function BlogCard({ post }: BlogCardProps) {
       );
     } else {
       return (
-        <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
           {post.author.name.charAt(0)}
         </div>
       );
@@ -54,18 +54,18 @@ const BlogCard = memo(function BlogCard({ post }: BlogCardProps) {
           />
         </div>
       )}
-      <div className="flex flex-col justify-between flex-1 p-6 bg-white dark:bg-gray-800">
+      <div className="flex flex-col justify-between flex-1 p-6 bg-white">
         <div className="flex-1">
           <div className="flex items-center text-sm">
-            <time dateTime={post.date} className="text-gray-500 dark:text-gray-400">
+            <time dateTime={post.date} className="text-gray-500">
               {formattedDate}
             </time>
           </div>
           <Link href={`/blog/${post.slug}`} className="block mt-2" prefetch={false}>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white hover:underline">
+            <h3 className="text-xl font-semibold text-gray-900 hover:underline">
               {post.title}
             </h3>
-            <p className="mt-3 text-base text-gray-500 dark:text-gray-400">
+            <p className="mt-3 text-base text-gray-500">
               {post.excerpt}
             </p>
           </Link>
@@ -75,7 +75,7 @@ const BlogCard = memo(function BlogCard({ post }: BlogCardProps) {
             {authorAvatar}
           </div>
           <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">
+            <p className="text-sm font-medium text-gray-900">
               {post.author.name}
             </p>
           </div>
@@ -85,7 +85,7 @@ const BlogCard = memo(function BlogCard({ post }: BlogCardProps) {
             {post.tags.map((tag) => (
               <span 
                 key={tag} 
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
               >
                 {tag}
               </span>

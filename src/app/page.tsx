@@ -75,12 +75,12 @@ export default function Home() {
         >
           <div className="bg-white/30 dark:bg-black/30 p-3 rounded-full backdrop-blur-sm transition-theme">
             <svg className="w-6 h-6 text-white transition-theme" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
-          </div>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
+        </div>
         </div>
       </section>
-      
+
       {/* 添加一个额外的部分让箭头有地方可以滚动到 */}
       <section className="h-screen flex items-center justify-center bg-card-bg transition-theme">
         <div className="ide-card p-8 m-4 rounded-lg max-w-2xl transition-theme">

@@ -16,7 +16,7 @@
   --accent: #8b5cf6;
   
   /* 界面元素 */
-  --navbar-bg: rgba(255, 255, 255, 0.85);
+  --navbar-bg: rgba(255, 255, 255, 0.9);
   --card-bg: #ffffff;
   --card-border: #e5e7eb;
   --input-bg: #f9fafb;
@@ -29,6 +29,19 @@
   --text-muted: #6b7280;
   --text-link: #4f46e5;
   --text-code: #b91c1c;
+  --text-light: #ffffff;
+  
+  /* 文章卡片背景 */
+  --card-gradient-from: #f9fafb;
+  --card-gradient-to: #f3f4f6;
+  
+  /* 文章页面标题背景 */
+  --title-bg-from: #4f46e5;
+  --title-bg-to: #4338ca;
+  
+  /* 标签元素颜色 */
+  --tag-bg: #e0e7ff;
+  --tag-text: #3730a3;
 }
 
 @theme inline {
@@ -45,26 +58,39 @@
   --foreground: #f3f4f6;
   
   /* IDE风格颜色变量 */
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
+  --primary: #818cf8;
+  --primary-dark: #6366f1;
+  --primary-light: #a5b4fc;
   --secondary: #9ca3af;
   --accent: #a78bfa;
   
   /* 界面元素 */
-  --navbar-bg: rgba(14, 17, 23, 0.85);
+  --navbar-bg: rgba(14, 17, 23, 0.95);
   --card-bg: #1a1f29;
-  --card-border: #2a3141;
+  --card-border: #374151;
   --input-bg: #1a1f29;
-  --input-border: #374151;
-  --code-bg: #282c34;
+  --input-border: #4b5563;
+  --code-bg: #111827;
   
-  /* 文本颜色 */
+  /* 文本颜色 - 提高对比度 */
   --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
-  --text-link: #818cf8;
+  --text-secondary: #e5e7eb;
+  --text-muted: #d1d5db;
+  --text-link: #a5b4fc;
   --text-code: #f87171;
+  --text-light: #ffffff;
+  
+  /* 文章卡片背景 */
+  --card-gradient-from: #1f2937;
+  --card-gradient-to: #111827;
+  
+  /* 文章页面标题背景 */
+  --title-bg-from: #4338ca;
+  --title-bg-to: #312e81;
+  
+  /* 标签元素颜色 */
+  --tag-bg: #3730a3;
+  --tag-text: #c7d2fe;
 }
 
 /* 主题过渡效果 */
@@ -77,6 +103,13 @@ body,
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 400ms;
+}
+
+/* 确保所有元素平滑过渡 */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 
 body {
@@ -100,7 +133,7 @@ body {
 
 .ide-button-primary {
   background-color: var(--primary);
-  color: white;
+  color: var(--text-light);
 }
 
 .ide-button-primary:hover {
@@ -115,9 +148,226 @@ body {
 
 .ide-code-block {
   background-color: var(--code-bg);
-  color: var(--text-code);
+  border: 1px solid var(--card-border);
   border-radius: 0.375rem;
   padding: 0.75rem;
+  overflow-x: auto;
+  color: var(--text-primary);
+}
+
+.ide-blog-card {
+  background: linear-gradient(to bottom, var(--card-gradient-from), var(--card-gradient-to));
+  border: 1px solid var(--card-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ide-blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.post-title-bg {
+  background: linear-gradient(to bottom, var(--title-bg-from), var(--title-bg-to));
+}
+
+/* 标签样式 */
+.tag-badge {
+  background-color: var(--tag-bg);
+  color: var(--tag-text);
+  transition: background-color 0.3s;
+}
+
+.tag-badge:hover {
+  background-color: var(--primary);
+  color: var(--text-light);
+}
+
+/* 代码块样式增强 */
+pre {
+  overflow-x: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  background-color: var(--code-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0.375rem;
+}
+
+/* 暗色模式下代码高亮增强 */
+.dark pre,
+.dark code {
+  color: #f1f5f9;
+  background-color: var(--code-bg);
+  border-color: var(--card-border);
+}
+
+/* 高亮代码语法着色 - 通用 */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6b7280;
+}
+
+.token.punctuation {
+  color: #6b7280;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol {
+  color: #f59e0b;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin {
+  color: #10b981;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #b45309;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #3b82f6;
+}
+
+.token.function,
+.token.class-name {
+  color: #8b5cf6;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #ec4899;
+}
+
+/* 高亮代码语法着色 - 暗色模式 */
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.doctype,
+.dark .token.cdata {
+  color: #9ca3af;
+}
+
+.dark .token.punctuation {
+  color: #9ca3af;
+}
+
+.dark .token.property,
+.dark .token.tag,
+.dark .token.boolean,
+.dark .token.number,
+.dark .token.constant,
+.dark .token.symbol {
+  color: #fbbf24;
+}
+
+.dark .token.selector,
+.dark .token.attr-name,
+.dark .token.string,
+.dark .token.char,
+.dark .token.builtin {
+  color: #34d399;
+}
+
+.dark .token.operator,
+.dark .token.entity,
+.dark .token.url,
+.dark .language-css .token.string,
+.dark .style .token.string {
+  color: #fcd34d;
+}
+
+.dark .token.atrule,
+.dark .token.attr-value,
+.dark .token.keyword {
+  color: #60a5fa;
+}
+
+.dark .token.function,
+.dark .token.class-name {
+  color: #a78bfa;
+}
+
+.dark .token.regex,
+.dark .token.important,
+.dark .token.variable {
+  color: #f472b6;
+}
+
+/* 表格样式 */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.prose thead {
+  background-color: var(--input-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.prose th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.prose tr:nth-child(even) {
+  background-color: var(--card-bg);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  opacity: 0.5;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  pre {
+    font-size: 0.8rem;
+  }
+  
+  .prose table {
+    display: block;
+    overflow-x: auto;
+  }
 }
 
 /* 添加字体动画效果 */
@@ -130,32 +380,7 @@ body {
   animation: blink 1s step-end infinite;
 }
 
-/* 
-以下是几种字体选项:
-1. 思源黑体 (Source Han Sans) - 现代干净
-2. 方正书宋 (FangZheng ShuSong) - 传统书法感
-3. 汉仪旗黑 (HYQiHei) - 现代商业风格
-4. 霞鹜文楷 (LXGW WenKai) - 文艺复古风
-5. 阿里巴巴普惠体 (Alibaba PuHuiTi) - 科技感
-*/
-
-/* 请从以上选项中选择一款后，取消注释对应的字体设置 */
-
-/* 选项1: 思源黑体 */
-/*
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
-
-:root {
-  --font-sans: 'Noto Sans SC', sans-serif;
-}
-
-body {
-  font-family: var(--font-sans);
-}
-*/
-
-/* 选项2: 霞鹜文楷 (推荐 - 文艺复古风) */
-
+/* 字体设置 */
 @font-face {
   font-family: 'LXGW WenKai';
   src: url('//cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style/LXGWWENKAI-REGULAR.ttf') format('truetype');
@@ -172,35 +397,53 @@ body {
   font-family: var(--font-sans);
 }
 
-
-/* 选项3: 阿里巴巴普惠体 (推荐 - 现代科技感) */
-/*
-@font-face {
-  font-family: 'Alibaba PuHuiTi';
-  src: url('//at.alicdn.com/t/webfont_eovt4pxxy5.eot');
-  src: url('//at.alicdn.com/t/webfont_eovt4pxxy5.eot?#iefix') format('embedded-opentype'),
-       url('//at.alicdn.com/t/webfont_eovt4pxxy5.woff2') format('woff2'),
-       url('//at.alicdn.com/t/webfont_eovt4pxxy5.woff') format('woff'),
-       url('//at.alicdn.com/t/webfont_eovt4pxxy5.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+/* 增强暗模式下prose内容的可读性 */
+.dark .prose {
+  color: var(--text-secondary);
 }
 
-:root {
-  --font-sans: 'Alibaba PuHuiTi', sans-serif;
+.dark .prose h1, 
+.dark .prose h2, 
+.dark .prose h3, 
+.dark .prose h4, 
+.dark .prose h5, 
+.dark .prose h6 {
+  color: var(--text-primary);
 }
 
-body {
-  font-family: var(--font-sans);
+.dark .prose p, 
+.dark .prose ul, 
+.dark .prose ol, 
+.dark .prose blockquote {
+  color: var(--text-secondary);
 }
-*/
 
-/* 全局暗色模式设置 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.dark .prose strong {
+  color: var(--text-primary);
+}
+
+.dark .prose a {
+  color: var(--text-link);
+  text-decoration-color: var(--text-link);
+}
+
+/* 强制应用暗色模式特定样式 */
+.dark .text-text-primary {
+  color: var(--text-primary);
+}
+
+.dark .text-text-secondary {
+  color: var(--text-secondary);
+}
+
+.dark .text-text-muted {
+  color: var(--text-muted);
+}
+
+.dark .bg-card-bg {
+  background-color: var(--card-bg);
+}
+
+.dark .border-card-border {
+  border-color: var(--card-border);
 }

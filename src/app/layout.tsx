@@ -1,21 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MetadataHelper from "@/components/shared/MetadataHelper";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+import { GeistSans, GeistMono } from 'geist/font';
+import PrismHighlight from '@/components/PrismHighlight';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -27,15 +16,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s | 个人技术博客',
-    default: '个人技术博客',
-  },
-  description: "分享技术知识、经验和见解的个人博客",
-  applicationName: '个人技术博客',
-  authors: [{ name: '博主' }],
-  generator: 'Next.js',
-  keywords: ['技术博客', 'Web开发', 'React', 'Next.js'],
+  title: '技术博客',
+  description: '分享前端和全栈技术文章、教程和最佳实践',
 };
 
 export default function RootLayout({
@@ -45,13 +27,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              // 获取保存的主题或使用系统偏好
+              var savedTheme = localStorage.getItem('theme');
+              var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              var theme = savedTheme || (prefersDark ? 'dark' : 'light');
+              
+              // 应用暗色模式类名
+              if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+            })();
+          `
+        }} />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
+        className={`${GeistSans.variable} ${GeistMono.variable} antialiased min-h-screen flex flex-col bg-background dark:bg-background text-foreground dark:text-foreground transition-theme`}
       >
         <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />
         <MetadataHelper preloadPaths={['/blog', '/']} />
+        <PrismHighlight />
       </body>
     </html>
   );

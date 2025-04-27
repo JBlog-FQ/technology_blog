@@ -8,6 +8,26 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        primary: 'var(--primary)',
+        'primary-dark': 'var(--primary-dark)',
+        'primary-light': 'var(--primary-light)',
+        secondary: 'var(--secondary)',
+        accent: 'var(--accent)',
+        'card-bg': 'var(--card-bg)',
+        'card-border': 'var(--card-border)',
+        'input-bg': 'var(--input-bg)',
+        'input-border': 'var(--input-border)',
+        'code-bg': 'var(--code-bg)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
+        'text-link': 'var(--text-link)',
+        'text-code': 'var(--text-code)',
+        'text-light': 'var(--text-light)',
+      },
       animation: {
         blink: 'blink 1s step-end infinite',
         typewriter: 'typewriter 2s steps(40) forwards',
@@ -27,7 +47,14 @@ module.exports = {
         'lxgw': ['"LXGW WenKai"', 'serif'],
         'alibaba': ['"Alibaba PuHuiTi"', 'sans-serif'],
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '100%',
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 } 
