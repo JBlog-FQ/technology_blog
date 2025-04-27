@@ -8,16 +8,17 @@ import { blogPosts } from '@/data/blogPosts';
 import { parseMarkdown } from '@/utils/markdown';
 import { getPostBySlug } from '@/lib/blog';
 
-interface BlogPostPageProps {
-  params: {
-    slug: string;
-  };
-}
+// 使用更简单的参数结构，避免与PageProps约束冲突
+type PageParams = {
+  slug: string;
+};
 
 // 动态生成元数据
-export async function generateMetadata(
-  { params }: BlogPostPageProps
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
   const { slug } = params;
   const post = blogPosts.find((post) => post.slug === slug);
   
@@ -34,14 +35,18 @@ export async function generateMetadata(
 }
 
 // 生成静态路径
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<PageParams[]> {
   return blogPosts.map((post) => ({
     slug: post.slug,
   }));
 }
 
 // 使用服务器组件来渲染页面内容
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: PageParams;
+}) {
   const { slug } = params;
   const post = await getPostBySlug(slug);
   
