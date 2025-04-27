@@ -1,11 +1,12 @@
 'use client';
 
-import { Suspense } from 'react';
 import BlogCard from "@/components/blog/BlogCard";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import { getRecentPosts } from "@/lib/blog";
 import Image from "next/image";
+import { useEffect, useState } from 'react';
+import { BlogPost } from '@/types/blog';
+import { getRecentPostsClient } from '@/lib/blog';
 
 export const dynamic = 'force-static'; // 强制静态生成以提高性能
 
@@ -154,22 +155,34 @@ export default function Home() {
   );
 }
 
-// 客户端组件，用于加载最新文章
+// 重新实现为客户端组件，使用React的状态管理来加载数据
 function RecentPostsClient() {
-  return (
-    <Suspense fallback={<LoadingPosts />}>
-      <RecentPosts />
-    </Suspense>
-  );
-}
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// 服务器组件，用于获取最新文章
-async function RecentPosts() {
-  const recentPosts = await getRecentPosts(3);
-  
+  useEffect(() => {
+    async function loadPosts() {
+      try {
+        // 在客户端获取数据
+        const recentPosts = await getRecentPostsClient(3);
+        setPosts(recentPosts);
+      } catch (error) {
+        console.error('Failed to load recent posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadPosts();
+  }, []);
+
+  if (loading) {
+    return <LoadingPosts />;
+  }
+
   return (
     <>
-      {recentPosts.map((post) => (
+      {posts.map((post) => (
         <BlogCard key={post.id} post={post} />
       ))}
     </>

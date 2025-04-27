@@ -32,6 +32,15 @@ export const getRecentPosts = unstable_cache(
   { revalidate: 3600, tags: ['blog-posts'] }
 );
 
+// 客户端可用的版本，不使用缓存
+export function getRecentPostsClient(count = 3): Promise<BlogPost[]> {
+  return Promise.resolve(
+    [...blogPosts]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, count)
+  );
+}
+
 export const getPostsByTag = unstable_cache(
   async (tag: string): Promise<BlogPost[]> => {
     return blogPosts.filter((post) => post.tags?.includes(tag));
