@@ -3,9 +3,23 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { blogPosts } from '@/data/blogPosts';
+import { BlogPost } from '@/types/blog';
 
-export default function BlogPostClient({ post, contentHtml, tableOfContents, formattedDate }) {
+interface TocItem {
+  level: number;
+  id: string;
+  text: string;
+}
+
+interface BlogPostClientProps {
+  post: BlogPost;
+  contentHtml: string;
+  tableOfContents: TocItem[];
+  formattedDate: string;
+  relatedPosts?: BlogPost[];
+}
+
+export default function BlogPostClient({ post, contentHtml, tableOfContents, formattedDate, relatedPosts = [] }: BlogPostClientProps) {
   // 状态管理
   const [isTocCollapsed, setIsTocCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -215,21 +229,23 @@ export default function BlogPostClient({ post, contentHtml, tableOfContents, for
               </div>
               
               {/* 相关文章推荐 */}
-              <div className="mt-8">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">相关推荐</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {blogPosts.filter(p => p.slug !== post.slug).slice(0, 2).map((relatedPost) => (
-                    <Link 
-                      key={relatedPost.slug} 
-                      href={`/blog/${relatedPost.slug}`}
-                      className="block p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow hover:shadow-md transition-shadow"
-                    >
-                      <h4 className="font-medium text-gray-900 dark:text-white mb-1 line-clamp-1">{relatedPost.title}</h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{relatedPost.excerpt}</p>
-                    </Link>
-                  ))}
+              {relatedPosts.length > 0 && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">相关推荐</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {relatedPosts.slice(0, 2).map((relatedPost) => (
+                      <Link 
+                        key={relatedPost.slug} 
+                        href={`/blog/${relatedPost.slug}`}
+                        className="block p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow hover:shadow-md transition-shadow"
+                      >
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-1 line-clamp-1">{relatedPost.title}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{relatedPost.excerpt}</p>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </main>
           </div>
         </div>
@@ -239,7 +255,7 @@ export default function BlogPostClient({ post, contentHtml, tableOfContents, for
 }
 
 // 抽出TOC内容组件以复用
-function TocContent({ tableOfContents }) {
+function TocContent({ tableOfContents }: { tableOfContents: TocItem[] }) {
   return (
     <nav className="toc-nav">
       <ul className="space-y-1">
@@ -249,43 +265,36 @@ function TocContent({ tableOfContents }) {
           let textClass = '';
           
           switch(heading.level) {
-            case 1: 
-              indentClass = 'pl-0'; 
-              textClass = 'font-semibold text-gray-900 dark:text-white';
+            case 1:
+              textClass = 'font-bold text-gray-900 dark:text-white';
               break;
-            case 2: 
-              indentClass = 'pl-2'; 
-              textClass = 'font-medium text-gray-800 dark:text-gray-100';
+            case 2:
+              indentClass = 'ml-0';
+              textClass = 'font-semibold text-gray-800 dark:text-gray-100';
               break;
-            case 3: 
-              indentClass = 'pl-4'; 
+            case 3:
+              indentClass = 'ml-3';
+              textClass = 'text-gray-700 dark:text-gray-200';
+              break;
+            case 4:
+              indentClass = 'ml-6';
+              textClass = 'text-sm text-gray-600 dark:text-gray-300';
+              break;
+            case 5:
+            case 6:
+              indentClass = 'ml-9';
+              textClass = 'text-xs text-gray-500 dark:text-gray-400';
+              break;
+            default:
+              indentClass = '';
               textClass = 'text-gray-700 dark:text-gray-300';
-              break;
-            case 4: 
-              indentClass = 'pl-6'; 
-              textClass = 'text-gray-600 dark:text-gray-400 text-sm';
-              break;
-            case 5: 
-              indentClass = 'pl-8'; 
-              textClass = 'text-gray-500 dark:text-gray-500 text-sm';
-              break;
-            case 6: 
-              indentClass = 'pl-10'; 
-              textClass = 'text-gray-500 dark:text-gray-500 text-sm';
-              break;
-            default: 
-              indentClass = 'pl-0';
-              textClass = 'text-gray-900 dark:text-white';
           }
           
           return (
-            <li 
-              key={index} 
-              className={indentClass}
-            >
+            <li key={index} className={`${indentClass}`}>
               <a 
-                href={`#${heading.id}`} 
-                className={`toc-link block py-1.5 hover:text-primary dark:hover:text-primary-light transition-colors truncate ${textClass}`}
+                href={`#${heading.id}`}
+                className={`block py-1 px-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${textClass}`}
               >
                 {heading.text}
               </a>
@@ -298,25 +307,25 @@ function TocContent({ tableOfContents }) {
 }
 
 // 作者卡片组件
-function AuthorCard({ post }) {
+function AuthorCard({ post }: { post: BlogPost }) {
   return (
     <div className="flex items-center">
       {post.author.avatar ? (
         <Image
           src={post.author.avatar}
           alt={post.author.name}
-          width={50}
-          height={50}
-          className="rounded-full mr-3"
+          width={40}
+          height={40}
+          className="rounded-full"
         />
       ) : (
-        <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white mr-3">
-          {post.author.name.charAt(0)}
+        <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
+          {post.author.name.charAt(0).toUpperCase()}
         </div>
       )}
-      <div>
+      <div className="ml-3">
         <p className="font-medium text-gray-900 dark:text-white">{post.author.name}</p>
-        <p className="text-xs text-gray-600 dark:text-gray-400">文章作者</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">作者</p>
       </div>
     </div>
   );

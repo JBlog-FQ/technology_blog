@@ -84,7 +84,7 @@ export const blogPosts: BlogPost[] = [
       "学习资源"
     ]
   }
-];
+]; 
 
 export const getAllPosts = (): BlogPost[] => {
   return blogPosts;

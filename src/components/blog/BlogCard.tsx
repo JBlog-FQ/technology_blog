@@ -92,13 +92,13 @@ const BlogCard = memo(function BlogCard({ post }: BlogCardProps) {
         
         <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              {authorAvatar}
-            </div>
-            <div className="ml-3">
+          <div className="flex-shrink-0">
+            {authorAvatar}
+          </div>
+          <div className="ml-3">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
-                {post.author.name}
-              </p>
+              {post.author.name}
+            </p>
             </div>
           </div>
           

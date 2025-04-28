@@ -5,6 +5,7 @@ import { blogPosts } from '@/data/blogPosts';
 import { parseMarkdown } from '@/utils/markdown';
 import { getPostBySlug } from '@/lib/blog';
 import BlogPostClient from './BlogPostClient';
+import { BlogPost } from '@/types/blog';
 
 // 生成静态路径
 export function generateStaticParams() {
@@ -14,7 +15,7 @@ export function generateStaticParams() {
 }
 
 // 动态生成元数据
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: { slug: string } }) {
   // 确保params是完全解析的
   const resolvedParams = await Promise.resolve(params);
   const slug = resolvedParams.slug;
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }) {
 }
 
 // 辅助函数：从HTML内容中提取标题生成目录
-function extractToc(htmlContent) {
+function extractToc(htmlContent: string) {
   // 从内容中匹配所有的 h1-h6 标签
   const headingRegex = /<h([1-6]).*?id="(.*?)".*?>(.*?)<\/h\1>/g;
   const toc = [];
@@ -51,8 +52,41 @@ function extractToc(htmlContent) {
   return toc;
 }
 
+// 获取相关文章
+function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[], count: number = 2): BlogPost[] {
+  if (!currentPost.tags || currentPost.tags.length === 0) {
+    // 如果没有标签，返回最新的文章
+    return [...allPosts]
+      .filter(post => post.slug !== currentPost.slug)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, count);
+  }
+  
+  // 按标签匹配度和日期排序
+  return [...allPosts]
+    .filter(post => post.slug !== currentPost.slug)
+    .map(post => {
+      // 计算标签匹配度
+      const matchingTags = post.tags?.filter(tag => 
+        currentPost.tags?.includes(tag)
+      ).length || 0;
+      
+      return { post, matchingTags };
+    })
+    .sort((a, b) => {
+      // 首先按标签匹配度排序
+      if (b.matchingTags !== a.matchingTags) {
+        return b.matchingTags - a.matchingTags;
+      }
+      // 其次按日期排序
+      return new Date(b.post.date).getTime() - new Date(a.post.date).getTime();
+    })
+    .map(item => item.post)
+    .slice(0, count);
+}
+
 // 使用服务器组件来渲染页面内容
-export default async function BlogPostPage({ params }) {
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   // 确保params是完全解析的
   const resolvedParams = await Promise.resolve(params);
   const slug = resolvedParams.slug;
@@ -68,6 +102,8 @@ export default async function BlogPostPage({ params }) {
   const tableOfContents = extractToc(contentHtml);
   // 在服务器端格式化日期
   const formattedDate = format(new Date(post.date), 'yyyy年MM月dd日', { locale: zhCN });
+  // 获取相关文章
+  const relatedPosts = getRelatedPosts(post, blogPosts);
   
   // 将数据传递给客户端组件
   return <BlogPostClient 
@@ -75,5 +111,6 @@ export default async function BlogPostPage({ params }) {
     contentHtml={contentHtml} 
     tableOfContents={tableOfContents}
     formattedDate={formattedDate}
+    relatedPosts={relatedPosts}
   />;
 } 

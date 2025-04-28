@@ -151,7 +151,7 @@ export const parseMarkdown = (markdownContent: string): string => {
     // 使用正则表达式匹配==text==并替换为<mark>text</mark>
     return html.replace(/==([^=]+)==/g, '<mark>$1</mark>');
   };
-  
+
   // 配置marked选项
   marked.setOptions({
     renderer,
