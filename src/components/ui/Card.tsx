@@ -1,31 +1,42 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 interface CardProps {
   children: ReactNode;
   className?: string;
-  padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
 }
 
-const paddingStyles = {
-  none: '',
-  sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-8',
-};
-
-export default function Card({ 
-  children, 
-  className = '', 
-  padding = 'md',
-  hover = false,
-}: CardProps) {
-  const baseStyles = 'bg-white dark:bg-gray-800 rounded-lg overflow-hidden';
-  const hoverStyles = hover ? 'hover:shadow-xl transition-shadow duration-300' : '';
-  const paddingStyle = paddingStyles[padding];
-  
+export default function Card({ children, className = '', hover = true }: CardProps) {
   return (
-    <div className={`${baseStyles} ${hoverStyles} ${paddingStyle} ${className}`}>
+    <div 
+      className={`bg-card-bg dark:bg-card-bg border border-card-border rounded-lg shadow-sm ${
+        hover ? 'hover:shadow-md hover:-translate-y-1' : ''
+      } transition-all duration-300 ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function CardHeader({ children, className = '' }: { children: ReactNode, className?: string }) {
+  return (
+    <div className={`p-6 border-b border-card-border ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+export function CardContent({ children, className = '' }: { children: ReactNode, className?: string }) {
+  return (
+    <div className={`p-6 ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+export function CardFooter({ children, className = '' }: { children: ReactNode, className?: string }) {
+  return (
+    <div className={`p-6 border-t border-card-border ${className}`}>
       {children}
     </div>
   );

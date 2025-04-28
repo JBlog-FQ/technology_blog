@@ -10,6 +10,17 @@ interface Skill {
   level: number;
 }
 
+interface ProfileData {
+  name: string;
+  title: string;
+  email: string;
+  github: string;
+  bio: string;
+  hobbies: string;
+  hobbyTags: string[] | string;
+  skills: Array<{name: string; percentage?: number; level?: number}>;
+}
+
 interface FormData {
   name: string;
   title: string;
@@ -25,6 +36,7 @@ export default function EditAboutPage() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   
   // 表单数据
   const [formData, setFormData] = useState<FormData>({
@@ -49,12 +61,36 @@ export default function EditAboutPage() {
     // 检查用户是否是管理员
     const admin = isAdmin();
     setIsAuthorized(admin);
-    setIsLoading(false);
     
     if (!admin) {
       // 如果不是管理员，重定向到登录页面
       router.push('/admin/login');
+      return;
     }
+    
+    // 加载个人资料数据
+    async function loadProfileData() {
+      try {
+        const response = await fetch('/api/profile');
+        if (response.ok) {
+          const data = await response.json() as ProfileData;
+          setFormData({
+            ...data,
+            hobbyTags: Array.isArray(data.hobbyTags) ? data.hobbyTags.join(',') : data.hobbyTags,
+            skills: data.skills.map((skill: {name: string; percentage?: number; level?: number}) => ({
+              name: skill.name,
+              level: skill.percentage || skill.level || 0
+            }))
+          });
+        }
+      } catch (error) {
+        console.error('加载个人资料数据失败:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadProfileData();
   }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -76,14 +112,44 @@ export default function EditAboutPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSaving(true);
     
-    // 模拟保存数据
-    alert('个人信息已更新！');
-    
-    // 更新后返回关于页面
-    router.push('/about');
+    try {
+      // 准备数据
+      const profileData = {
+        ...formData,
+        hobbyTags: formData.hobbyTags.split(',').map(tag => tag.trim()).filter(Boolean),
+        skills: formData.skills.map(skill => ({
+          name: skill.name,
+          percentage: skill.level
+        }))
+      };
+      
+      // 发送到API保存
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+      
+      if (response.ok) {
+        alert('个人信息已成功更新！');
+        // 更新后返回关于页面
+        router.push('/about');
+      } else {
+        const errorData = await response.json();
+        alert(`保存失败: ${errorData.message || '未知错误'}`);
+      }
+    } catch (error) {
+      console.error('保存个人资料失败:', error);
+      alert('保存失败，请稍后再试!');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (isLoading) {
@@ -280,18 +346,25 @@ export default function EditAboutPage() {
               </div>
               
               {/* 提交按钮 */}
-              <div className="mt-10 flex justify-end space-x-4">
-                <Link
-                  href="/about"
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+              <div className="flex justify-end space-x-4 mt-8">
+                <Link 
+                  href="/about" 
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                 >
                   取消
                 </Link>
                 <button
                   type="submit"
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                  disabled={isSaving}
+                  className="px-4 py-2 border border-transparent text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
-                  保存更改
+                  {isSaving && (
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
+                  {isSaving ? '保存中...' : '保存修改'}
                 </button>
               </div>
             </form>

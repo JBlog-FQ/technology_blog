@@ -6,6 +6,7 @@ import { parseMarkdown } from '@/utils/markdown';
 import { getPostBySlug } from '@/lib/blog';
 import BlogPostClient from './BlogPostClient';
 import { BlogPost } from '@/types/blog';
+import { Metadata } from 'next';
 
 // 生成静态路径
 export function generateStaticParams() {
@@ -15,9 +16,8 @@ export function generateStaticParams() {
 }
 
 // 动态生成元数据
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  // 确保params是完全解析的
-  const resolvedParams = await Promise.resolve(params);
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const resolvedParams = await params;
   const slug = resolvedParams.slug;
   const post = blogPosts.find((post) => post.slug === slug);
   
@@ -87,8 +87,7 @@ function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[], count: num
 
 // 使用服务器组件来渲染页面内容
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  // 确保params是完全解析的
-  const resolvedParams = await Promise.resolve(params);
+  const resolvedParams = await params;
   const slug = resolvedParams.slug;
   const post = await getPostBySlug(slug);
   

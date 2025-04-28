@@ -1,0 +1,41 @@
+{
+  "name": "路人の博客",
+  "title": "Java开发工程师",
+  "email": "example@example.com",
+  "github": "github.com/yourusername",
+  "bio": "你好！我是一名热爱技术的开发者，专注于Web开发和前端技术。我在软件行业工作已有多年，经历了从传统网站开发到现代JavaScript框架的整个演变过程。\n\n通过这个博客，我希望能够分享我在技术领域的所见所闻和经验心得，同时也记录自己的学习和成长历程。",
+  "hobbies": "除了编码，我还喜欢阅读技术书籍、参加技术交流活动、尝试新技术和工具。在空闲时间，我喜欢徒步旅行、摄影和探索新地方。",
+  "hobbyTags": [
+    "技术阅读",
+    "徒步旅行",
+    "摄影",
+    "音乐",
+    "开源贡献"
+  ],
+  "skills": [
+    {
+      "name": "Java",
+      "percentage": 70
+    },
+    {
+      "name": "MySQL",
+      "percentage": 80
+    },
+    {
+      "name": "Vue",
+      "percentage": 50
+    },
+    {
+      "name": "MinIO",
+      "percentage": 75
+    },
+    {
+      "name": "数据库设计",
+      "percentage": 80
+    },
+    {
+      "name": "性能优化",
+      "percentage": 80
+    }
+  ]
+}
