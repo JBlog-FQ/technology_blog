@@ -4,6 +4,7 @@ import { useState, ChangeEvent, FormEvent, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
+import './admin.css';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -292,7 +293,7 @@ export default function AdminPage() {
             </div>
           </div>
           
-          <div className="flex justify-end pt-4">
+          <div className="admin-form-buttons">
             <Button 
               type="button" 
               variant="outline" 
@@ -301,13 +302,16 @@ export default function AdminPage() {
             >
               取消
             </Button>
-            <Button 
-              type="submit" 
-              isLoading={isSubmitting}
-              disabled={isSubmitting || !file}
-            >
-              发布文章
-            </Button>
+            <div className="admin-form-submit-button-container">
+              <Button 
+                type="submit" 
+                isLoading={isSubmitting}
+                disabled={isSubmitting || !file}
+                className="admin-form-submit-button"
+              >
+                发布文章
+              </Button>
+            </div>
           </div>
         </form>
       </div>

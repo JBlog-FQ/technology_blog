@@ -3,8 +3,10 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MetadataHelper from "@/components/shared/MetadataHelper";
-import { GeistSans, GeistMono } from 'geist/font';
-import PrismHighlight from '@/components/PrismHighlight';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import { ThemeProvider } from '@/components/common/ThemeProvider';
+import PrismHighlight from '@/components/common/PrismHighlight';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -16,17 +18,24 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: '技术博客',
-  description: '分享前端和全栈技术文章、教程和最佳实践',
+  title: {
+    default: '技术博客',
+    template: '%s | 技术博客',
+  },
+  description: '分享开发技术、编程经验和个人见解的技术博客',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
 };
+
+const GeistSansClass = GeistSans.className;
+const GeistMonoClass = GeistMono.className;
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="zh-CN" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="zh-CN" className={`${GeistSansClass} ${GeistMonoClass} scroll-smooth`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{
           __html: `
@@ -46,14 +55,16 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body
-        className={`${GeistSans.variable} ${GeistMono.variable} antialiased min-h-screen flex flex-col bg-background dark:bg-background text-foreground dark:text-foreground transition-theme`}
-      >
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
-        <MetadataHelper preloadPaths={['/blog', '/']} />
-        <PrismHighlight />
+      <body className="transition-theme">
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+            <MetadataHelper preloadPaths={['/blog', '/']} />
+            <PrismHighlight />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

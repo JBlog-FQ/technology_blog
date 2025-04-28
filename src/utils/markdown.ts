@@ -39,8 +39,7 @@ function slugify(text: string): string {
     .replace(/-+/g, '-');
 }
 
-// 自定义标记解析扩展
-// 解析 ==highlighted text== 为 <mark>highlighted text</mark>
+// 自定义标记类型
 interface HighlightToken {
   type: string;
   raw: string;
@@ -152,6 +151,9 @@ export const parseMarkdown = (markdownContent: string): string => {
     return html.replace(/==([^=]+)==/g, '<mark>$1</mark>');
   };
 
+  // 预处理Markdown内容，移除HTML注释
+  const preprocessedContent = markdownContent.replace(/<!--[\s\S]*?-->/g, '');
+
   // 配置marked选项
   marked.setOptions({
     renderer,
@@ -161,7 +163,7 @@ export const parseMarkdown = (markdownContent: string): string => {
   });
   
   // 使用marked将Markdown转换为HTML
-  let rawHtml = marked(markdownContent) as string;
+  let rawHtml = marked(preprocessedContent) as string;
   
   // 应用高亮处理（以防扩展未能正常工作）
   rawHtml = processHighlights(rawHtml);

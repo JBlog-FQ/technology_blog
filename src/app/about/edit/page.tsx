@@ -138,8 +138,8 @@ export default function EditAboutPage() {
       
       if (response.ok) {
         alert('个人信息已成功更新！');
-        // 更新后返回关于页面
-        router.push('/about');
+    // 更新后返回关于页面
+    router.push('/about');
       } else {
         const errorData = await response.json();
         alert(`保存失败: ${errorData.message || '未知错误'}`);
@@ -347,8 +347,8 @@ export default function EditAboutPage() {
               
               {/* 提交按钮 */}
               <div className="flex justify-end space-x-4 mt-8">
-                <Link 
-                  href="/about" 
+                <Link
+                  href="/about"
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                 >
                   取消

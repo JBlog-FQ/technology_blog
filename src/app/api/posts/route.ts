@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, readFile, mkdir } from 'fs/promises';
+import { writeFile, readFile, mkdir, unlink } from 'fs/promises';
 import path from 'path';
 import { existsSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
@@ -116,6 +116,20 @@ export async function POST(request: NextRequest) {
       );
       
       await writeFile(blogPostsPath, updatedContent);
+      
+      // 主动触发缓存重新验证
+      try {
+        await fetch(`${request.nextUrl.origin}/api/revalidate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ tag: 'blog-posts' }),
+        });
+        console.log('缓存重新验证成功');
+      } catch (revalidateError) {
+        console.error('缓存重新验证失败:', revalidateError);
+      }
     } catch (error) {
       console.error('保存博客文章列表失败:', error);
       // 即使保存失败，我们仍然继续，因为内存中的博客文章列表已经更新
@@ -133,6 +147,83 @@ export async function POST(request: NextRequest) {
     console.error('文章发布失败:', error);
     return NextResponse.json(
       { message: '服务器错误，无法发布文章' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get('slug');
+    
+    if (!slug) {
+      return NextResponse.json(
+        { message: '缺少必要的参数: slug' },
+        { status: 400 }
+      );
+    }
+    
+    // 查找要删除的博客文章
+    const postIndex = blogPosts.findIndex(post => post.slug === slug);
+    
+    if (postIndex === -1) {
+      return NextResponse.json(
+        { message: `文章 "${slug}" 不存在` },
+        { status: 404 }
+      );
+    }
+    
+    const post = blogPosts[postIndex];
+    
+    // 1. 删除Markdown文件
+    const contentDir = path.join(process.cwd(), 'content');
+    const filePath = path.join(contentDir, `${slug}.md`);
+    
+    if (existsSync(filePath)) {
+      await unlink(filePath);
+    }
+    
+    // 2. 如果存在封面图片，删除它
+    if (post.coverImage) {
+      // 从URL路径获取文件名
+      const imageFileName = post.coverImage.split('/').pop();
+      if (imageFileName) {
+        const imagePath = path.join(process.cwd(), 'public', 'images', 'blog', imageFileName);
+        if (existsSync(imagePath)) {
+          await unlink(imagePath);
+        }
+      }
+    }
+    
+    // 3. 从内存数组中删除文章
+    blogPosts.splice(postIndex, 1);
+    
+    // 4. 持久化保存更新后的博客文章列表
+    try {
+      const blogPostsPath = path.join(process.cwd(), 'src', 'data', 'blogPosts.ts');
+      const blogPostsContent = await readFile(blogPostsPath, 'utf-8');
+      
+      // 使用正则表达式定位和替换blogPosts数组
+      const updatedContent = blogPostsContent.replace(
+        /export const blogPosts: BlogPost\[\] = \[[\s\S]*?\];/,
+        `export const blogPosts: BlogPost[] = ${JSON.stringify(blogPosts, null, 2)};`
+      );
+      
+      await writeFile(blogPostsPath, updatedContent);
+    } catch (error) {
+      console.error('保存博客文章列表失败:', error);
+      // 即使保存失败，我们仍然继续，因为内存中的博客文章列表已经更新
+    }
+    
+    return NextResponse.json(
+      { message: '文章删除成功' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('文章删除失败:', error);
+    return NextResponse.json(
+      { message: '服务器错误，无法删除文章' },
       { status: 500 }
     );
   }

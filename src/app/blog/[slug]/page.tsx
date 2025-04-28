@@ -1,12 +1,17 @@
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { blogPosts } from '@/data/blogPosts';
 import { parseMarkdown } from '@/utils/markdown';
-import { getPostBySlug } from '@/lib/blog';
 import BlogPostClient from './BlogPostClient';
 import { BlogPost } from '@/types/blog';
-import { Metadata } from 'next';
+import fs from 'fs';
+import path from 'path';
+
+// 禁用所有页面缓存，确保每次访问都获取最新数据
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // 生成静态路径
 export function generateStaticParams() {
@@ -15,21 +20,26 @@ export function generateStaticParams() {
   }));
 }
 
-// 动态生成元数据
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
-  const post = blogPosts.find((post) => post.slug === slug);
+// 生成元数据
+export async function generateMetadata(
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
+  const slug = await Promise.resolve(params.slug) as string;
+  const post = blogPosts.find(p => p.slug === slug);
   
   if (!post) {
     return {
-      title: '文章未找到',
+      title: 'Not Found',
+      description: 'The page you are looking for does not exist.'
     };
   }
-  
+
   return {
-    title: `${post.title} | 路人の博客`,
+    title: post.title,
     description: post.excerpt,
+    openGraph: {
+      images: post.coverImage ? [{ url: post.coverImage }] : [],
+    },
   };
 }
 
@@ -53,50 +63,73 @@ function extractToc(htmlContent: string) {
 }
 
 // 获取相关文章
-function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[], count: number = 2): BlogPost[] {
+function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[], limit = 3) {
+  // 如果没有标签，返回最新的几篇文章（排除当前文章）
   if (!currentPost.tags || currentPost.tags.length === 0) {
-    // 如果没有标签，返回最新的文章
-    return [...allPosts]
-      .filter(post => post.slug !== currentPost.slug)
+    return allPosts
+      .filter(post => post.id !== currentPost.id)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, count);
+      .slice(0, limit);
   }
   
-  // 按标签匹配度和日期排序
-  return [...allPosts]
-    .filter(post => post.slug !== currentPost.slug)
+  // 根据标签相似性排序文章
+  return allPosts
+    .filter(post => post.id !== currentPost.id) // 排除当前文章
     .map(post => {
-      // 计算标签匹配度
-      const matchingTags = post.tags?.filter(tag => 
+      const commonTags = post.tags?.filter(tag => 
         currentPost.tags?.includes(tag)
       ).length || 0;
       
-      return { post, matchingTags };
+      return { post, commonTags };
     })
     .sort((a, b) => {
-      // 首先按标签匹配度排序
-      if (b.matchingTags !== a.matchingTags) {
-        return b.matchingTags - a.matchingTags;
+      if (b.commonTags !== a.commonTags) {
+        return b.commonTags - a.commonTags; // 首先按共同标签数量排序
       }
-      // 其次按日期排序
+      // 如果共同标签数量相同，按日期排序
       return new Date(b.post.date).getTime() - new Date(a.post.date).getTime();
     })
-    .map(item => item.post)
-    .slice(0, count);
+    .slice(0, limit)
+    .map(item => item.post);
+}
+
+// 从文件系统读取完整博客内容
+async function readFullPostContent(slug: string): Promise<string | null> {
+  try {
+    const contentPath = path.join(process.cwd(), 'content', `${slug}.md`);
+    if (fs.existsSync(contentPath)) {
+      const content = fs.readFileSync(contentPath, 'utf-8');
+      return content;
+    }
+    return null;
+  } catch (error) {
+    console.error(`读取文章内容失败: ${slug}`, error);
+    return null;
+  }
 }
 
 // 使用服务器组件来渲染页面内容
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
-  const post = await getPostBySlug(slug);
-  
+  const slug = await Promise.resolve(params.slug) as string;
+  const post = blogPosts.find(p => p.slug === slug);
+
   if (!post) {
     notFound();
   }
+
+  // 确保封面图像路径正确
+  const enhancedPost = {
+    ...post,
+    coverImage: post.coverImage && !post.coverImage.startsWith('/') ? 
+      `/${post.coverImage}` : post.coverImage
+  };
+
+  // 从文件系统读取完整内容
+  const fullContent = await readFullPostContent(slug);
+  const contentToUse = fullContent || post.content;
   
   // 在服务器端解析Markdown
-  const contentHtml = parseMarkdown(post.content);
+  const contentHtml = parseMarkdown(contentToUse);
   // 从HTML内容中提取目录结构
   const tableOfContents = extractToc(contentHtml);
   // 在服务器端格式化日期
@@ -106,7 +139,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   
   // 将数据传递给客户端组件
   return <BlogPostClient 
-    post={post} 
+    post={enhancedPost}
     contentHtml={contentHtml} 
     tableOfContents={tableOfContents}
     formattedDate={formattedDate}

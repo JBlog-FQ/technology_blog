@@ -23,6 +23,7 @@ export default function BlogPostClient({ post, contentHtml, tableOfContents, for
   // 状态管理
   const [isTocCollapsed, setIsTocCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   // 检测设备大小
   useEffect(() => {
@@ -39,6 +40,24 @@ export default function BlogPostClient({ post, contentHtml, tableOfContents, for
   const toggleToc = () => {
     setIsTocCollapsed(!isTocCollapsed);
   };
+
+  // 处理图片加载错误
+  const handleImageError = () => {
+    console.error("封面图片加载失败:", post.coverImage);
+    setImageError(true);
+  };
+  
+  // 确定实际使用的封面图片路径
+  const coverImageSrc = imageError ? '/images/default-cover.jpg' : (post.coverImage || '/images/default-cover.jpg');
+  
+  // 调试
+  useEffect(() => {
+    console.log("客户端组件加载", {
+      coverImage: post.coverImage,
+      coverImageSrc,
+      imageErrorState: imageError
+    });
+  }, [post.coverImage, coverImageSrc, imageError]);
   
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen transition-theme">
@@ -64,21 +83,25 @@ export default function BlogPostClient({ post, contentHtml, tableOfContents, for
       </div>
       
       {/* 标题区域 - 居中独立展示 */}
-      <div className="w-full bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-900 dark:to-purple-900 py-16 relative">
-        {post.coverImage && (
-          <div className="absolute inset-0 opacity-20">
-            <Image
-              src={post.coverImage}
-              alt=""
-              fill
-              className="object-cover"
-              priority={true}
-            />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+      <div className="w-full bg-gradient-to-r from-indigo-700 to-purple-700 dark:from-indigo-900 dark:to-purple-900 py-20 relative min-h-[400px] overflow-hidden">
+        {/* 封面图片容器 */}
+        <div className="absolute inset-0 overflow-hidden">
+          <Image
+            src={coverImageSrc}
+            alt={post.title}
+            fill
+            sizes="100vw"
+            quality={100}
+            className="object-cover opacity-50"
+            priority={true}
+            onError={handleImageError}
+            unoptimized={true}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60"></div>
+        </div>
+        
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight max-w-4xl mx-auto shadow-text">
             {post.title}
           </h1>
           
@@ -95,7 +118,7 @@ export default function BlogPostClient({ post, contentHtml, tableOfContents, for
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span>{post.author.name}</span>
+              <span>{post.author?.name || '博主'}</span>
             </div>
             
             {post.tags && post.tags.length > 0 && (
@@ -310,21 +333,21 @@ function TocContent({ tableOfContents }: { tableOfContents: TocItem[] }) {
 function AuthorCard({ post }: { post: BlogPost }) {
   return (
     <div className="flex items-center">
-      {post.author.avatar ? (
+      {post.author?.avatar ? (
         <Image
           src={post.author.avatar}
-          alt={post.author.name}
+          alt={post.author?.name || '博主'}
           width={40}
           height={40}
           className="rounded-full"
         />
       ) : (
         <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300">
-          {post.author.name.charAt(0).toUpperCase()}
+          {post.author?.name?.charAt(0).toUpperCase() || '博'}
         </div>
       )}
       <div className="ml-3">
-        <p className="font-medium text-gray-900 dark:text-white">{post.author.name}</p>
+        <p className="font-medium text-gray-900 dark:text-white">{post.author?.name || '博主'}</p>
         <p className="text-xs text-gray-500 dark:text-gray-400">作者</p>
       </div>
     </div>

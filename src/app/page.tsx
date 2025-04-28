@@ -66,9 +66,9 @@ export default function Home() {
           isVisibleRef.current = isVisible;
           if (isVisible) {
             startAnimation();
-          } else {
+      } else {
             resetAnimation();
-          }
+      }
         }
       }
     };
@@ -110,19 +110,19 @@ export default function Home() {
               {displayedText}
               <span className="animate-blink">|</span>
             </p>
-          </div>
-
+        </div>
+        
           {/* 向下箭头 - 移动到文字下方 */}
-          <div 
+        <div 
             className="mt-12 inline-block animate-bounce cursor-pointer"
-            onClick={handleScrollDown}
-          >
+          onClick={handleScrollDown}
+        >
             <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm hover:bg-white/30 transition-all duration-300 hover:scale-110">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-              </svg>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
             </div>
-          </div>
+        </div>
         </div>
       </section>
 
@@ -219,12 +219,12 @@ function exploreLife() {
     keepPassion();
   }
 }`}</code>
-                </pre>
+            </pre>
               </div>
             </div>
           </div>
         </Section>
-      </div>
+        </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import BlogCard from '@/components/blog/BlogCard';
-import { getAllPosts } from '@/data/blogPosts';
+import { blogPosts } from '@/data/blogPosts';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BlogPost } from '@/types/blog';
@@ -20,7 +20,7 @@ export default function BlogPage() {
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
 
   // 获取所有博客文章
-  const allPostsMemo = useMemo(() => getAllPosts(), []);
+  const allPostsMemo = useMemo(() => blogPosts, []);
 
   // 获取所有标签
   const allTagsMemo = useMemo(() => {
@@ -98,23 +98,23 @@ export default function BlogPage() {
         title="技术博客" 
         description="探索最新的技术趋势、教程和深度分析，提升您的开发技能"
       >
-        {/* 搜索框 */}
+          {/* 搜索框 */}
         <div className="max-w-2xl mx-auto mt-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="搜索文章..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="搜索文章..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-6 py-4 text-gray-800 bg-white rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+              />
             <button className="absolute right-4 top-1/2 -translate-y-1/2 text-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
       </PageHeader>
 
       <Section>
@@ -180,7 +180,7 @@ export default function BlogPage() {
                             {tag}
                           </span>
                         ))}
-                      </div>
+                        </div>
                       <h3 className="text-2xl md:text-3xl font-bold mb-2">{post.title}</h3>
                       <p className="text-white/80 line-clamp-2 mb-4 md:mb-6">{post.excerpt}</p>
                       <Link 
@@ -217,20 +217,20 @@ export default function BlogPage() {
           {filteredPosts.map(post => (
             <BlogCard key={post.id} post={post} />
           ))}
-        </div>
+          </div>
 
         {/* 如果没有符合条件的文章 */}
         {filteredPosts.length === 0 && (
           <div className="text-center py-16">
             <h3 className="text-xl font-medium text-text-primary mb-2">没有找到符合条件的文章</h3>
             <p className="text-text-secondary mb-6">请尝试不同的搜索词或标签</p>
-            <button
-              onClick={resetFilters}
+              <button
+                onClick={resetFilters}
               className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
-            >
+              >
               清除筛选条件
-            </button>
-          </div>
+              </button>
+            </div>
         )}
       </Section>
     </div>
